@@ -77,7 +77,15 @@ export default function DashboardPage() {
         throw new Error(`Database error: ${error.message}`);
       }
 
-      setSubscription(data);
+      // Set default values if no subscription exists
+      setSubscription(data || {
+        subscription_status: 'not_started',
+        price_id: null,
+        current_period_end: null,
+        cancel_at_period_end: false,
+        payment_method_brand: null,
+        payment_method_last4: null
+      });
     } catch (err: any) {
       console.error('Error fetching subscription:', err);
       setError(err.message || 'Failed to load subscription data');
@@ -180,24 +188,29 @@ export default function DashboardPage() {
     }
   };
 
+  const subscriptionStatusBadges = {
+    active: { variant: 'default' as const, label: 'Active' },
+    trialing: { variant: 'secondary' as const, label: 'Trial' },
+    past_due: { variant: 'destructive' as const, label: 'Past Due' },
+    canceled: { variant: 'outline' as const, label: 'Canceled' },
+    incomplete: { variant: 'destructive' as const, label: 'Incomplete' },
+    not_started: { variant: 'outline' as const, label: 'No Subscription' },
+  };
+
   const getSubscriptionStatusBadge = (status: string) => {
-    const statusConfig = {
-      active: { variant: 'default' as const, label: 'Active' },
-      trialing: { variant: 'secondary' as const, label: 'Trial' },
-      past_due: { variant: 'destructive' as const, label: 'Past Due' },
-      canceled: { variant: 'outline' as const, label: 'Canceled' },
-      incomplete: { variant: 'destructive' as const, label: 'Incomplete' },
-      not_started: { variant: 'outline' as const, label: 'No Subscription' },
-    };
-
-    const config = statusConfig[status as keyof typeof statusConfig] || 
+    const config = subscriptionStatusBadges[status as keyof typeof subscriptionStatusBadges] || 
                    { variant: 'outline' as const, label: status };
-
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const getCurrentPlan = () => {
     if (!subscription?.price_id) return null;
+    
+    // First try to find in STRIPE_PRODUCTS array
+    const productFromArray = STRIPE_PRODUCTS.find(p => p.priceId === subscription.price_id);
+    if (productFromArray) return productFromArray;
+    
+    // Fall back to getProductByPriceId function
     return getProductByPriceId(subscription.price_id);
   };
 
@@ -298,13 +311,13 @@ export default function DashboardPage() {
                 <p className="text-sm font-medium text-blue-600">Current Plan</p>
                 <div className="flex items-center gap-2 mt-1">
                   <p className="text-blue-900">
-                    {currentPlan ? currentPlan.name : 'No active subscription'}
+                    {currentPlan?.name || 'No active subscription'}
                   </p>
                   {subscription && getSubscriptionStatusBadge(subscription.subscription_status)}
                 </div>
               </div>
               
-              {subscription?.current_period_end && (
+              {subscription?.current_period_end && subscription.subscription_status !== 'not_started' && (
                 <div>
                   <p className="text-sm font-medium text-blue-600">
                     {subscription.cancel_at_period_end ? 'Expires' : 'Renews'} on
@@ -324,9 +337,9 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              {!subscription && !error && (
+              {subscription?.subscription_status === 'not_started' && (
                 <div>
-                  <p className="text-sm text-blue-600">No subscription found</p>
+                  <p className="text-sm text-blue-600">No active subscription found</p>
                 </div>
               )}
             </CardContent>
