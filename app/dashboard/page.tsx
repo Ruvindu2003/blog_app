@@ -55,9 +55,8 @@ export default function DashboardPage() {
 
   const fetchSubscription = async (userId?: string) => {
     try {
-      setError(''); // Clear previous errors
+      setError('');
       
-      // Get current user if not provided
       let currentUserId = userId;
       if (!currentUserId) {
         const { data: { user } } = await supabase.auth.getUser();
@@ -70,7 +69,7 @@ export default function DashboardPage() {
       const { data, error } = await supabase
         .from('stripe_user_subscriptions')
         .select('*')
-        .eq('user_id', currentUserId) // Add user filter
+        .eq('user_id', currentUserId)
         .maybeSingle();
 
       if (error) {
@@ -97,14 +96,12 @@ export default function DashboardPage() {
         return;
       }
 
-      // Redirect to the provided Stripe checkout URL for the specific product
       const stripeCheckoutUrl = 'https://buy.stripe.com/test_00wdRbcrS1gq1ru6xm7EQ00';
       if (priceId === STRIPE_PRODUCTS.find(product => product.priceId === priceId)?.priceId) {
         window.location.href = stripeCheckoutUrl;
         return;
       }
 
-      // Fallback to existing checkout logic for other products
       try {
         const edgeFunctionUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/stripe-checkout`;
         
@@ -138,7 +135,6 @@ export default function DashboardPage() {
       } catch (edgeError) {
         console.warn('Edge function failed, trying API route:', edgeError);
         
-        // Method 2: Fallback to Next.js API route
         const response = await fetch('/api/stripe/checkout', {
           method: 'POST',
           headers: {
@@ -180,7 +176,6 @@ export default function DashboardPage() {
       router.push('/auth/login');
     } catch (err) {
       console.error('Sign out error:', err);
-      // Still redirect even if sign out fails
       router.push('/auth/login');
     }
   };
@@ -218,10 +213,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading dashboard...</p>
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <p className="text-blue-800">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -230,30 +225,34 @@ export default function DashboardPage() {
   const currentPlan = getCurrentPlan();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600 mt-1">Welcome back, {user?.email}</p>
+            <h1 className="text-3xl font-bold text-blue-900">Dashboard</h1>
+            <p className="text-blue-700 mt-1">Welcome back, {user?.email}</p>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            <LogOut className="h-4 w-4 mr-2" />
+          <Button 
+            variant="outline" 
+            onClick={handleSignOut}
+            className="border-blue-300 text-blue-700 hover:bg-blue-50 hover:text-blue-900"
+          >
+            <LogOut className="h-4 w-4 mr-2 text-blue-600" />
             Sign Out
           </Button>
         </div>
 
         {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription className="flex items-center justify-between">
+          <Alert variant="destructive" className="mb-6 bg-red-50 border-red-200">
+            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="flex items-center justify-between text-red-700">
               <span>{error}</span>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={retryFetchSubscription}
-                className="ml-4"
+                className="ml-4 border-red-300 text-red-700 hover:bg-red-100"
               >
                 Retry
               </Button>
@@ -263,42 +262,42 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* User Info Card */}
-          <Card>
+          <Card className="bg-white border-blue-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-blue-900">
+                <User className="h-5 w-5 text-blue-600" />
                 Account Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-500">Email</p>
-                <p className="text-gray-900">{user?.email}</p>
+                <p className="text-sm font-medium text-blue-600">Email</p>
+                <p className="text-blue-900">{user?.email}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">User ID</p>
-                <p className="text-gray-900 text-sm font-mono">{user?.id}</p>
+                <p className="text-sm font-medium text-blue-600">User ID</p>
+                <p className="text-blue-900 text-sm font-mono">{user?.id}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Account Status</p>
-                <Badge variant="default">Active</Badge>
+                <p className="text-sm font-medium text-blue-600">Account Status</p>
+                <Badge variant="default" className="bg-blue-600 hover:bg-blue-700">Active</Badge>
               </div>
             </CardContent>
           </Card>
 
           {/* Subscription Card */}
-          <Card>
+          <Card className="bg-white border-blue-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Crown className="h-5 w-5" />
+              <CardTitle className="flex items-center gap-2 text-blue-900">
+                <Crown className="h-5 w-5 text-blue-600" />
                 Subscription Status
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-500">Current Plan</p>
+                <p className="text-sm font-medium text-blue-600">Current Plan</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <p className="text-gray-900">
+                  <p className="text-blue-900">
                     {currentPlan ? currentPlan.name : 'No active subscription'}
                   </p>
                   {subscription && getSubscriptionStatusBadge(subscription.subscription_status)}
@@ -307,10 +306,10 @@ export default function DashboardPage() {
               
               {subscription?.current_period_end && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">
+                  <p className="text-sm font-medium text-blue-600">
                     {subscription.cancel_at_period_end ? 'Expires' : 'Renews'} on
                   </p>
-                  <p className="text-gray-900">
+                  <p className="text-blue-900">
                     {new Date(subscription.current_period_end * 1000).toLocaleDateString()}
                   </p>
                 </div>
@@ -318,8 +317,8 @@ export default function DashboardPage() {
 
               {subscription?.payment_method_brand && subscription?.payment_method_last4 && (
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Payment Method</p>
-                  <p className="text-gray-900 capitalize">
+                  <p className="text-sm font-medium text-blue-600">Payment Method</p>
+                  <p className="text-blue-900 capitalize">
                     {subscription.payment_method_brand} ending in {subscription.payment_method_last4}
                   </p>
                 </div>
@@ -327,7 +326,7 @@ export default function DashboardPage() {
 
               {!subscription && !error && (
                 <div>
-                  <p className="text-sm text-gray-500">No subscription found</p>
+                  <p className="text-sm text-blue-600">No subscription found</p>
                 </div>
               )}
             </CardContent>
@@ -336,36 +335,45 @@ export default function DashboardPage() {
 
         {/* Products Section */}
         <div className="mt-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Available Products</h2>
+          <h2 className="text-2xl font-bold text-blue-900 mb-6">Available Plans</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {STRIPE_PRODUCTS.map((product) => {
               const isCurrentPlan = currentPlan?.id === product.id;
               const isSubscribed = subscription?.subscription_status === 'active' && isCurrentPlan;
               
               return (
-                <Card key={product.id} className={isCurrentPlan ? 'ring-2 ring-blue-500' : ''}>
+                <Card 
+                  key={product.id} 
+                  className={`bg-white border-blue-200 shadow-sm transition-all hover:shadow-md ${
+                    isCurrentPlan ? 'ring-2 ring-blue-500 border-blue-300' : ''
+                  }`}
+                >
                   <CardHeader>
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-lg">{product.name}</CardTitle>
-                      {isCurrentPlan && <Badge>Current</Badge>}
+                      <CardTitle className="text-lg text-blue-900">{product.name}</CardTitle>
+                      {isCurrentPlan && (
+                        <Badge className="bg-blue-100 text-blue-800 border-blue-300">Current</Badge>
+                      )}
                     </div>
-                    <CardDescription>{product.description || 'Premium features and benefits'}</CardDescription>
+                    <CardDescription className="text-blue-700">
+                      {product.description || 'Premium features and benefits'}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <p className="text-3xl font-bold">
+                        <p className="text-3xl font-bold text-blue-900">
                           ${product.price.toFixed(2)}
-                          <span className="text-sm font-normal text-gray-500">
+                          <span className="text-sm font-normal text-blue-600">
                             /{product.mode === 'subscription' ? 'month' : 'one-time'}
                           </span>
                         </p>
                       </div>
                       
-                      <Separator />
+                      <Separator className="bg-blue-200" />
                       
                       <Button
-                        className="w-full"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                         onClick={() => handleCheckout(product.priceId, product.mode)}
                         disabled={checkoutLoading === product.priceId || isSubscribed}
                       >

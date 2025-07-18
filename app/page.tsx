@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, Star, ArrowRight, CreditCard, Shield, Zap } from 'lucide-react';
+import { CheckCircle, Star, ArrowRight, CreditCard, Shield, Zap, Sparkles, Users, Globe } from 'lucide-react';
 import { STRIPE_PRODUCTS } from '@/src/stripe-config';
 
 export default function HomePage() {
@@ -36,31 +36,38 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Subtle Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-blue-50/40 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-blue-100/20 rounded-full blur-2xl animate-pulse delay-500"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav className="border-b border-gray-100 bg-white/95 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Star className="h-5 w-5 text-white" />
+            <div className="flex items-center space-x-3 group">
+              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                <Star className="h-6 w-6 text-white group-hover:rotate-12 transition-transform duration-300" />
               </div>
-              <span className="text-xl font-bold text-gray-900">ProductApp</span>
+              <span className="text-2xl font-bold text-gray-900">ProductApp</span>
             </div>
             
             <div className="flex items-center space-x-4">
               {loading ? (
-                <div className="w-20 h-9 bg-gray-200 animate-pulse rounded-md"></div>
+                <div className="w-20 h-10 bg-gray-100 animate-pulse rounded-lg"></div>
               ) : user ? (
-                <Button asChild>
+                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300">
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
               ) : (
                 <>
-                  <Button variant="ghost" asChild>
+                  <Button variant="ghost" asChild className="text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300">
                     <Link href="/auth/login">Sign In</Link>
                   </Button>
-                  <Button asChild>
+                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">
                     <Link href="/auth/signup">Get Started</Link>
                   </Button>
                 </>
@@ -71,28 +78,39 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="max-w-3xl mx-auto">
-            <Badge variant="secondary" className="mb-4">
+      <section className="py-24 px-4 relative bg-white">
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <Badge variant="secondary" className="mb-6 bg-blue-50 text-blue-600 border-blue-200 px-4 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-300">
+              <Sparkles className="w-4 h-4 mr-2" />
               ✨ New Features Available
             </Badge>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight text-gray-900">
               Unlock Premium
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                {' '}Features
+              <br />
+              <span className="text-blue-600 animate-pulse">
+                Features
               </span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
               Experience the full potential of our platform with premium subscriptions. 
               Get access to advanced features, priority support, and exclusive content.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" onClick={handleGetStarted} className="text-lg px-8 py-3">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Button 
+                size="lg" 
+                onClick={handleGetStarted} 
+                className="text-lg px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
+              >
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg px-8 py-3">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                asChild 
+                className="text-lg px-10 py-4 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:border-blue-700 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+              >
                 <Link href="#pricing">View Pricing</Link>
               </Button>
             </div>
@@ -101,113 +119,134 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 bg-white/50">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section className="py-20 px-4 bg-gray-50 relative">
+        <div className="container mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Why Choose Our Platform?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Built with modern technology and designed for performance, security, and scalability.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Zap className="h-8 w-8 text-white" />
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                icon: Zap,
+                title: "Lightning Fast",
+                description: "Optimized for speed and performance with modern web technologies.",
+                color: "bg-blue-600"
+              },
+              {
+                icon: Shield,
+                title: "Secure & Reliable",
+                description: "Enterprise-grade security with 99.9% uptime guarantee.",
+                color: "bg-blue-600"
+              },
+              {
+                icon: Users,
+                title: "Easy to Use",
+                description: "Intuitive interface designed for both beginners and professionals.",
+                color: "bg-blue-600"
+              }
+            ].map((feature, index) => (
+              <div key={index} className="text-center group hover:scale-105 transition-all duration-300">
+                <div className={`w-20 h-20 ${feature.color} rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:rotate-6`}>
+                  <feature.icon className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Lightning Fast</h3>
-              <p className="text-gray-600">
-                Optimized for speed and performance with modern web technologies.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-white" />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 px-4 bg-white relative">
+        <div className="container mx-auto text-center relative z-10">
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            {[
+              { number: "50K+", label: "Happy Customers" },
+              { number: "99.9%", label: "Uptime" },
+              { number: "24/7", label: "Support" }
+            ].map((stat, index) => (
+              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">{stat.number}</div>
+                <div className="text-gray-600 text-lg">{stat.label}</div>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Secure & Reliable</h3>
-              <p className="text-gray-600">
-                Enterprise-grade security with 99.9% uptime guarantee.
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Easy to Use</h3>
-              <p className="text-gray-600">
-                Intuitive interface designed for both beginners and professionals.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+      <section id="pricing" className="py-24 px-4 bg-gray-50 relative">
+        <div className="container mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Simple, Transparent Pricing
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Choose the plan that works best for you. All plans include our core features.
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {STRIPE_PRODUCTS.map((product, index) => (
-              <Card key={product.id} className={`relative ${index === 1 ? 'ring-2 ring-blue-500 scale-105' : ''}`}>
+              <Card key={product.id} className={`relative bg-white border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group ${index === 1 ? 'ring-2 ring-blue-600 scale-105' : ''}`}>
                 {index === 1 && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white">Most Popular</Badge>
+                    <Badge className="bg-blue-600 text-white shadow-md px-4 py-2">
+                      <Star className="w-4 h-4 mr-1" />
+                      Most Popular
+                    </Badge>
                   </div>
                 )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{product.name}</CardTitle>
-                  <CardDescription className="min-h-[3rem] flex items-center justify-center">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">{product.name}</CardTitle>
+                  <CardDescription className="min-h-[3rem] flex items-center justify-center text-gray-600 text-lg">
                     {product.description || 'Premium features and benefits for enhanced productivity'}
                   </CardDescription>
-                  <div className="py-4">
-                    <span className="text-4xl font-bold text-gray-900">
+                  <div className="py-6">
+                    <span className="text-5xl md:text-6xl font-bold text-gray-900">
                       ${product.price.toFixed(2)}
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 text-lg ml-2">
                       /{product.mode === 'subscription' ? 'month' : 'one-time'}
                     </span>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Access to all premium features</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Priority customer support</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">Advanced analytics dashboard</span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      <span className="text-gray-700">API access and integrations</span>
-                    </div>
+                <CardContent className="pt-0">
+                  <div className="space-y-4 mb-8">
+                    {[
+                      "Access to all premium features",
+                      "Priority customer support",
+                      "Advanced analytics dashboard",
+                      "API access and integrations"
+                    ].map((feature, featureIndex) => (
+                      <div key={featureIndex} className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                        <span className="text-gray-700">{feature}</span>
+                      </div>
+                    ))}
                   </div>
                   
-                  <Separator className="mb-6" />
+                  <Separator className="mb-8 bg-gray-200" />
                   
                   <Button 
-                    className="w-full" 
+                    className={`w-full py-4 text-lg font-semibold transition-all duration-300 hover:scale-105 ${
+                      index === 1 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
+                        : 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:border-blue-700 shadow-md bg-white'
+                    }`}
                     variant={index === 1 ? 'default' : 'outline'}
                     onClick={handleGetStarted}
                   >
-                    <CreditCard className="mr-2 h-4 w-4" />
+                    <CreditCard className="mr-2 h-5 w-5" />
                     {product.mode === 'subscription' ? 'Start Subscription' : 'Purchase Now'}
                   </Button>
                 </CardContent>
@@ -218,41 +257,46 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="container mx-auto text-center">
-          <div className="max-w-3xl mx-auto text-white">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="py-24 px-4 bg-white relative">
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto bg-blue-600 rounded-3xl p-12 shadow-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
               Ready to Get Started?
             </h2>
-            <p className="text-xl mb-8 text-blue-100">
+            <p className="text-xl md:text-2xl mb-10 text-blue-100 leading-relaxed">
               Join thousands of satisfied customers who trust our platform for their business needs.
             </p>
             <Button 
               size="lg" 
               variant="secondary" 
               onClick={handleGetStarted}
-              className="text-lg px-8 py-3"
+              className="text-lg px-12 py-4 bg-white text-blue-600 hover:bg-gray-50 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
             >
               Start Your Journey Today
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4">
-        <div className="container mx-auto">
+      <footer className="bg-gray-50 text-gray-900 py-16 px-4 relative">
+        <div className="container mx-auto relative z-10">
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Star className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-center space-x-3 mb-6 group">
+              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                <Star className="h-7 w-7 text-white group-hover:rotate-12 transition-transform duration-300" />
               </div>
-              <span className="text-xl font-bold">ProductApp</span>
+              <span className="text-3xl font-bold text-gray-900">ProductApp</span>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-600 mb-6 text-lg max-w-2xl mx-auto">
               Building the future of digital experiences, one feature at a time.
             </p>
+            <div className="flex justify-center space-x-8 mb-8">
+              <Globe className="h-6 w-6 text-gray-500 hover:text-blue-600 transition-colors duration-300 cursor-pointer" />
+              <Users className="h-6 w-6 text-gray-500 hover:text-blue-600 transition-colors duration-300 cursor-pointer" />
+              <Shield className="h-6 w-6 text-gray-500 hover:text-blue-600 transition-colors duration-300 cursor-pointer" />
+            </div>
             <p className="text-gray-500 text-sm">
               © 2025 ProductApp. All rights reserved.
             </p>
