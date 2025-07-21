@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Search, Calendar, Crown, Edit, Trash, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,6 +69,7 @@ export default function PostList() {
       setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      toast.error('Failed to load posts');
     } finally {
       setLoading(false);
     }
@@ -87,8 +89,10 @@ export default function PostList() {
       
       setPosts(posts.filter(post => post.id !== postToDelete));
       setDeleteDialogOpen(false);
+      toast.success('Post deleted successfully');
     } catch (error) {
       console.error('Error deleting post:', error);
+      toast.error('Failed to delete post');
     } finally {
       setIsDeleting(false);
       setPostToDelete(null);
@@ -99,8 +103,28 @@ export default function PostList() {
     e.preventDefault();
     if (!postToEdit) return;
 
+    // Basic validation
+    if (!postToEdit.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+
+    if (!postToEdit.content.trim()) {
+      toast.error('Content is required');
+      return;
+    }
+
     try {
       setIsUpdating(true);
+      
+      // Verify authentication
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('You need to be logged in to update posts');
+        return;
+      }
+
+      // Update the post
       const { error } = await supabase
         .from('posts')
         .update({
@@ -114,10 +138,16 @@ export default function PostList() {
 
       if (error) throw error;
       
-      setPosts(posts.map(post => post.id === postToEdit.id ? postToEdit : post));
+      // Update local state
+      setPosts(prevPosts => prevPosts.map(post => 
+        post.id === postToEdit.id ? { ...post, ...postToEdit } : post
+      ));
+      
       setEditDialogOpen(false);
-    } catch (error) {
+      toast.success('Post updated successfully!');
+    } catch (error: any) {
       console.error('Error updating post:', error);
+      toast.error(error.message || 'Failed to update post');
     } finally {
       setIsUpdating(false);
     }
@@ -125,7 +155,7 @@ export default function PostList() {
 
   const filteredPosts = posts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase())
+    (post.excerpt && post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   if (loading) {
@@ -164,7 +194,7 @@ export default function PostList() {
           />
         </div>
         <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
-          <Link href="/blog/new" className="flex items-center gap-2">
+          <Link href="/blog/create" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             New Post
           </Link>
@@ -319,11 +349,9 @@ export default function PostList() {
                   value={postToEdit.title}
                   onChange={(e) => setPostToEdit({...postToEdit, title: e.target.value})}
                   className="border-blue-200 focus:border-blue-400"
+                  required
                 />
               </div>
-
-
-              
               
               <div className="space-y-2">
                 <Label htmlFor="excerpt" className="text-blue-800">Excerpt</Label>
@@ -342,6 +370,7 @@ export default function PostList() {
                   value={postToEdit.content}
                   onChange={(e) => setPostToEdit({...postToEdit, content: e.target.value})}
                   className="min-h-[200px] border-blue-200 focus:border-blue-400"
+                  required
                 />
               </div>
               

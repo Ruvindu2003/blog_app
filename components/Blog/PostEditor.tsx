@@ -201,8 +201,7 @@ export default function PostEditor({ postId }: PostEditorProps) {
 
     try {
       let imageUrl = featuredImage;
-
-      // Only upload if there's a new image file
+    
       if (imageFile) {
         const uploadedImageUrl = await uploadImage();
         if (uploadedImageUrl) {
