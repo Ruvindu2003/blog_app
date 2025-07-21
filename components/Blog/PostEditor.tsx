@@ -19,7 +19,6 @@ interface PostEditorProps {
 interface User {
   id: string;
   email?: string;
-  // Add other user properties as needed
 }
 
 export default function PostEditor({ postId }: PostEditorProps) {
@@ -79,7 +78,7 @@ export default function PostEditor({ postId }: PostEditorProps) {
         .from('posts')
         .select('*')
         .eq('id', postId)
-        .eq('author_id', user.id) // Security: only allow editing own posts
+        .eq('author_id', user.id)
         .single();
 
       if (error) {
@@ -107,13 +106,11 @@ export default function PostEditor({ postId }: PostEditorProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       setError('Please select a valid image file.');
       return;
     }
 
-    // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       setError('Image size must be less than 5MB.');
       return;
@@ -121,7 +118,6 @@ export default function PostEditor({ postId }: PostEditorProps) {
 
     setImageFile(file);
     
-    // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string);
@@ -148,7 +144,6 @@ export default function PostEditor({ postId }: PostEditorProps) {
         throw error;
       }
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('blog')
         .getPublicUrl(fileName);
@@ -164,7 +159,6 @@ export default function PostEditor({ postId }: PostEditorProps) {
   };
 
   const removeImage = async () => {
-    // If there's an existing image URL, optionally delete it from storage
     if (featuredImage && featuredImage.includes('supabase')) {
       try {
         const path = featuredImage.split('/').pop();
@@ -191,7 +185,6 @@ export default function PostEditor({ postId }: PostEditorProps) {
     e.preventDefault();
     if (!user) return;
 
-    // Validate required fields
     if (!title.trim()) {
       setError('Title is required.');
       return;
@@ -209,12 +202,17 @@ export default function PostEditor({ postId }: PostEditorProps) {
     try {
       let imageUrl = featuredImage;
 
-      // Upload new image if selected
+      // Only upload if there's a new image file
       if (imageFile) {
         const uploadedImageUrl = await uploadImage();
         if (uploadedImageUrl) {
           imageUrl = uploadedImageUrl;
         }
+      }
+
+      // If no image is selected and no existing image, set to null
+      if (!imageFile && !featuredImage) {
+        imageUrl = null;
       }
 
       const postData = {
@@ -232,7 +230,7 @@ export default function PostEditor({ postId }: PostEditorProps) {
           .from('posts')
           .update(postData)
           .eq('id', postId)
-          .eq('author_id', user.id); // Security: only allow updating own posts
+          .eq('author_id', user.id);
         
         if (error) throw error;
         setSuccess('Post updated successfully!');
@@ -249,13 +247,11 @@ export default function PostEditor({ postId }: PostEditorProps) {
         if (error) throw error;
         setSuccess(`Post created successfully!`);
         
-        // Redirect after a short delay
         setTimeout(() => {
           router.push('/blog');
         }, 2000);
       }
 
-      // Clear the image file state after successful save
       setImageFile(null);
     } catch (error: any) {
       console.error('Error saving post:', error);
@@ -332,7 +328,6 @@ export default function PostEditor({ postId }: PostEditorProps) {
               />
             </div>
 
-            {/* Featured Image Section */}
             <div className="space-y-2">
               <Label>Featured Image</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">

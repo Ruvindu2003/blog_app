@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Search, Calendar, Crown, Edit, Trash, Loader2, Plus, X } from 'lucide-react';
+import { Search, Calendar, Crown, Edit, Trash, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +33,7 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  image_url?: string;
   excerpt: string | null;
   is_premium: boolean;
   created_at: string;
@@ -210,17 +211,34 @@ export default function PostList() {
               </CardHeader>
               
               <CardContent className="flex justify-between items-center">
-                <div className="flex items-center text-sm text-blue-600">
-                  <Calendar className="h-4 w-4 mr-2 text-blue-400" />
-                  {new Date(post.created_at).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
+                <div className="flex items-center gap-4">
+                  {post.image_url ? (
+                    <img
+                      src={post.image_url}
+                      alt="Post thumbnail"
+                      className="w-12 h-12 object-cover rounded-md border border-blue-100"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-md border border-blue-100 bg-gray-100 flex items-center justify-center">
+                      <ImageIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center text-sm text-blue-600">
+                    <Calendar className="h-4 w-4 mr-2 text-blue-400" />
+                    {new Date(post.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
                 </div>
-                
+
                 <div className="flex gap-2">
-                  <Button 
+                  <Button
                     variant="outline" 
                     size="sm" 
                     className="border-blue-300 text-blue-600 hover:bg-blue-50"
@@ -303,6 +321,9 @@ export default function PostList() {
                   className="border-blue-200 focus:border-blue-400"
                 />
               </div>
+
+
+              
               
               <div className="space-y-2">
                 <Label htmlFor="excerpt" className="text-blue-800">Excerpt</Label>
